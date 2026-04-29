@@ -96,24 +96,54 @@ const ogImageAbsolute = new URL(ogImage, siteOrigin).toString();
 
     <!-- Reveal-on-scroll + parallax -->
     <script>
+      // Si el usuario tiene "Reducir movimiento" en iOS/macOS, mostramos todo
+      // sin animación pero al menos visible. Sin esto, los elementos quedaban
+      // ocultos para usuarios con preferencia accesible.
+      const prefersReduce = () =>
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+      const showAllImmediate = () => {
+        document.querySelectorAll("[data-reveal]").forEach((el) => {
+          el.classList.add("is-visible");
+        });
+      };
+
       const init = () => {
+        // Si reduce-motion: pinta todo visible y salimos.
+        if (prefersReduce()) {
+          showAllImmediate();
+          return;
+        }
+
         const els = document.querySelectorAll("[data-reveal]");
+        if (!("IntersectionObserver" in window)) {
+          // Fallback antiguo: muéstralo todo.
+          showAllImmediate();
+          return;
+        }
+
         const io = new IntersectionObserver(
           (entries) => {
             entries.forEach((e) => {
               if (e.isIntersecting) {
-                e.target.classList.add("is-visible");
+                // requestAnimationFrame asegura que iOS Safari pinte el
+                // estado inicial (opacity:0, translateY) ANTES de aplicar
+                // la clase, para que la transición sí se vea.
+                requestAnimationFrame(() => {
+                  e.target.classList.add("is-visible");
+                });
                 io.unobserve(e.target);
               }
             });
           },
-          { threshold: 0.12, rootMargin: "0px 0px -8% 0px" }
+          { threshold: 0.08, rootMargin: "0px 0px -5% 0px" }
         );
         els.forEach((el) => io.observe(el));
 
-        // Light parallax
+        // Light parallax (desactivado en móvil para performance/jank en iOS)
+        const isMobile = window.matchMedia("(max-width: 1023px)").matches;
         const px = document.querySelectorAll<HTMLElement>("[data-parallax]");
-        if (px.length && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+        if (px.length && !isMobile) {
           const onScroll = () => {
             const y = window.scrollY;
             px.forEach((el) => {
@@ -125,8 +155,16 @@ const ogImageAbsolute = new URL(ogImage, siteOrigin).toString();
           onScroll();
         }
       };
-      document.addEventListener("astro:page-load", init);
-      init();
+
+      // Esperar al primer paint antes de inicializar (clave para iOS Safari).
+      const boot = () => requestAnimationFrame(() => requestAnimationFrame(init));
+
+      if (document.readyState === "loading") {
+        document.addEventListener("DOMContentLoaded", boot, { once: true });
+      } else {
+        boot();
+      }
+      document.addEventListener("astro:page-load", boot);
     </script>
   </body>
 </html>
