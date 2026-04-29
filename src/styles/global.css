@@ -260,8 +260,21 @@
   }
 }
 
-/* Reduced motion respect */
+/* Reduced motion respect — preserva micro-interacciones (hover, focus, color)
+   pero mata loops infinitos y movimientos largos. Patrón equilibrado entre
+   accesibilidad y vida visual del sitio. */
 @media (prefers-reduced-motion: reduce) {
-  * { animation: none !important; transition-duration: 0.01ms !important; }
-  [data-reveal] { opacity: 1; transform: none; }
+  /* Loops infinitos y transformaciones grandes: muertos */
+  .marquee-track,
+  [data-parallax],
+  .parallax-slow {
+    animation: none !important;
+    transform: none !important;
+  }
+  /* Reveals: aparecen instantáneos, sin transición pero al menos visibles */
+  [data-reveal] {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
 }

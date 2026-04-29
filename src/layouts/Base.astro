@@ -122,23 +122,44 @@ const ogImageAbsolute = new URL(ogImage, siteOrigin).toString();
           return;
         }
 
+        // Stagger automático: los elementos del primer viewport aparecen
+        // en cascada (cinemático) en vez de todos a la vez.
+        let firstWaveIndex = 0;
+        const STAGGER_MS = 90;
+
         const io = new IntersectionObserver(
           (entries) => {
             entries.forEach((e) => {
               if (e.isIntersecting) {
+                const el = e.target as HTMLElement;
+                const delay = firstWaveIndex < 8 ? firstWaveIndex * STAGGER_MS : 0;
+                firstWaveIndex++;
                 // requestAnimationFrame asegura que iOS Safari pinte el
-                // estado inicial (opacity:0, translateY) ANTES de aplicar
-                // la clase, para que la transición sí se vea.
+                // estado inicial ANTES de aplicar la clase, para que la
+                // transición sí se vea.
                 requestAnimationFrame(() => {
-                  e.target.classList.add("is-visible");
+                  if (delay > 0) {
+                    setTimeout(() => el.classList.add("is-visible"), delay);
+                  } else {
+                    el.classList.add("is-visible");
+                  }
                 });
-                io.unobserve(e.target);
+                io.unobserve(el);
               }
             });
           },
-          { threshold: 0.08, rootMargin: "0px 0px -5% 0px" }
+          { threshold: 0.05, rootMargin: "0px 0px -3% 0px" }
         );
         els.forEach((el) => io.observe(el));
+
+        // Safety net: si por cualquier razón un reveal queda invisible
+        // 1.5s después de inicializar, lo forzamos visible. No queremos
+        // contenido oculto por bug del observer.
+        setTimeout(() => {
+          document.querySelectorAll("[data-reveal]:not(.is-visible)").forEach((el) => {
+            el.classList.add("is-visible");
+          });
+        }, 1500);
 
         // Light parallax (desactivado en móvil para performance/jank en iOS)
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
