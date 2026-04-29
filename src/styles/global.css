@@ -40,13 +40,22 @@
     text-rendering: optimizeLegibility;
     scroll-behavior: smooth;
   }
+  /* IMPORTANTE: NO usar `overflow-x: hidden` en <body> ni en <html>.
+     iOS Safari rompe `position: sticky` cuando body/html tienen overflow.
+     El control del overflow horizontal vive en cada section que tiene
+     halos/blurs absolutos (Hero, etc.) usando overflow-hidden local. */
   body {
     background:
       radial-gradient(1200px 600px at 80% -10%, rgba(201, 163, 91, 0.08), transparent 60%),
       radial-gradient(900px 500px at -10% 30%, rgba(107, 31, 31, 0.08), transparent 60%),
       var(--color-ink);
     min-height: 100dvh;
-    overflow-x: hidden;
+  }
+  /* Como salvavidas global, prevenir scrollbar horizontal por desbordes
+     menores (1-2px) sin afectar el sticky del header. Aplicado a <main>,
+     no al body, así el sticky calcula su containing block contra body. */
+  main {
+    overflow-x: clip;
   }
   ::selection {
     background: var(--color-gold);

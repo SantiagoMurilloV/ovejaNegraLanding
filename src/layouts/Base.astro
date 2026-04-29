@@ -108,6 +108,12 @@ const ogImageAbsolute = new URL(ogImage, siteOrigin).toString();
         });
       };
 
+      const isInViewport = (el: Element) => {
+        const r = el.getBoundingClientRect();
+        const vh = window.innerHeight || document.documentElement.clientHeight;
+        return r.top < vh && r.bottom > 0;
+      };
+
       const init = () => {
         // Si reduce-motion: pinta todo visible y salimos.
         if (prefersReduce()) {
@@ -115,51 +121,50 @@ const ogImageAbsolute = new URL(ogImage, siteOrigin).toString();
           return;
         }
 
-        const els = document.querySelectorAll("[data-reveal]");
+        const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+
+        // ─── PRIMER VIEWPORT: animación garantizada con stagger ─────
+        // En iOS Safari, IntersectionObserver puede dispararse antes
+        // del primer paint y el browser optimiza saltándose la transición.
+        // Para los elementos ya visibles al cargar, los activamos con
+        // setTimeout escalonado — animación 100% confiable.
+        const STAGGER_MS = 110;
+        const firstWave = els.filter(isInViewport);
+        const offscreen = els.filter((el) => !isInViewport(el));
+
+        firstWave.forEach((el, i) => {
+          setTimeout(() => {
+            el.classList.add("is-visible");
+          }, 80 + i * STAGGER_MS); // 80ms inicial para asegurar primer paint
+        });
+
+        // ─── REVEALS POR SCROLL: observer para los que están abajo ──
         if (!("IntersectionObserver" in window)) {
-          // Fallback antiguo: muéstralo todo.
-          showAllImmediate();
-          return;
+          // Fallback: si no hay observer, muéstralos todos al instante
+          offscreen.forEach((el) => el.classList.add("is-visible"));
+        } else {
+          const io = new IntersectionObserver(
+            (entries) => {
+              entries.forEach((e) => {
+                if (e.isIntersecting) {
+                  const el = e.target as HTMLElement;
+                  requestAnimationFrame(() => el.classList.add("is-visible"));
+                  io.unobserve(el);
+                }
+              });
+            },
+            { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
+          );
+          offscreen.forEach((el) => io.observe(el));
         }
 
-        // Stagger automático: los elementos del primer viewport aparecen
-        // en cascada (cinemático) en vez de todos a la vez.
-        let firstWaveIndex = 0;
-        const STAGGER_MS = 90;
-
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((e) => {
-              if (e.isIntersecting) {
-                const el = e.target as HTMLElement;
-                const delay = firstWaveIndex < 8 ? firstWaveIndex * STAGGER_MS : 0;
-                firstWaveIndex++;
-                // requestAnimationFrame asegura que iOS Safari pinte el
-                // estado inicial ANTES de aplicar la clase, para que la
-                // transición sí se vea.
-                requestAnimationFrame(() => {
-                  if (delay > 0) {
-                    setTimeout(() => el.classList.add("is-visible"), delay);
-                  } else {
-                    el.classList.add("is-visible");
-                  }
-                });
-                io.unobserve(el);
-              }
-            });
-          },
-          { threshold: 0.05, rootMargin: "0px 0px -3% 0px" }
-        );
-        els.forEach((el) => io.observe(el));
-
         // Safety net: si por cualquier razón un reveal queda invisible
-        // 1.5s después de inicializar, lo forzamos visible. No queremos
-        // contenido oculto por bug del observer.
+        // 2s después de inicializar, lo forzamos visible.
         setTimeout(() => {
           document.querySelectorAll("[data-reveal]:not(.is-visible)").forEach((el) => {
             el.classList.add("is-visible");
           });
-        }, 1500);
+        }, 2000);
 
         // Light parallax (desactivado en móvil para performance/jank en iOS)
         const isMobile = window.matchMedia("(max-width: 1023px)").matches;
