@@ -13,9 +13,9 @@ const links = [
 
 <header
   id="site-nav"
-  class="sticky top-0 z-40 border-b border-bone/5 bg-ink supports-[backdrop-filter]:bg-ink/80 backdrop-blur-xl transition-all duration-500"
+  class="relative bg-ink transition-shadow duration-500"
 >
-  <div class="container-screen flex items-center justify-between py-4">
+  <div class="container-screen flex items-center justify-between py-3.5 md:py-4">
     <Logo class="text-bone" />
 
     <nav aria-label="Principal" class="hidden lg:flex items-center gap-8 text-sm">
@@ -174,11 +174,14 @@ const links = [
       if (e.key === "Escape" && menu?.classList.contains("is-open")) closeMenu();
     });
 
-    // Scroll-shadow del header
+    // Scroll-shadow del header — aplica al wrapper .site-header externo
+    // (el sticky/bg ahora vive ahí, no en este <header>). El TopBar lo lee
+    // para colapsarse al scrollear en móvil.
+    const header = document.querySelector(".site-header");
     const onScroll = () => {
-      if (!nav) return;
-      if (window.scrollY > 8) nav.classList.add("is-scrolled");
-      else nav.classList.remove("is-scrolled");
+      if (!header) return;
+      if (window.scrollY > 8) header.classList.add("is-scrolled");
+      else header.classList.remove("is-scrolled");
     };
     window.addEventListener("scroll", onScroll, { passive: true });
     onScroll();
@@ -189,16 +192,6 @@ const links = [
 </script>
 
 <style>
-  /* Header scrolled — background sólido por defecto, semitransparente solo si el navegador soporta backdrop-filter (iOS Safari + overflow-x: hidden a veces lo rompe; mejor sólido que ilegible). */
-  #site-nav.is-scrolled {
-    background: var(--color-ink);
-    box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.6);
-  }
-  @supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
-    #site-nav.is-scrolled {
-      background: color-mix(in oklab, var(--color-ink) 90%, transparent);
-    }
-  }
   .nav-link::after {
     content: "";
     position: absolute;

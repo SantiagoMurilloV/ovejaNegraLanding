@@ -17,8 +17,10 @@ import Footer from "../components/Footer.astro";
 ---
 
 <Base>
-  <TopBar />
-  <Nav />
+  <div class="site-header sticky top-0 z-40 bg-ink border-b border-bone/8">
+    <TopBar />
+    <Nav />
+  </div>
   <main>
     <Hero />
     <Marquee />
