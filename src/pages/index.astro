@@ -21,6 +21,21 @@ import Footer from "../components/Footer.astro";
     <TopBar />
     <Nav />
   </div>
+
+  <style is:global>
+    /* iOS Safari: forzar layer GPU en el sticky para que NO se confunda
+       con el sub-pixel scroll del viewport dinámico (Safari URL bar collapse).
+       translateZ(0) + will-change garantiza que WebKit respete `position: sticky`
+       en mobile incluso con `min-height: 100dvh` y secciones con overflow. */
+    .site-header {
+      -webkit-transform: translateZ(0);
+      transform: translateZ(0);
+      will-change: transform;
+      /* Asegura que el header tape el contenido detrás incluso si algún hijo
+         tuviera fondo transparente o backdrop-filter no aplicado. */
+      isolation: isolate;
+    }
+  </style>
   <main>
     <Hero />
     <Marquee />
