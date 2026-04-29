@@ -17,25 +17,60 @@ import Footer from "../components/Footer.astro";
 ---
 
 <Base>
-  <div class="site-header sticky top-0 z-40 bg-ink border-b border-bone/8">
+  <!-- Header con position:fixed para evitar TODOS los bugs de sticky en iOS Safari.
+       El padding-top del body se calcula dinámicamente con JS midiendo el header. -->
+  <div class="site-header fixed inset-x-0 top-0 z-40 bg-ink border-b border-bone/8">
     <TopBar />
     <Nav />
   </div>
 
   <style is:global>
-    /* iOS Safari: forzar layer GPU en el sticky para que NO se confunda
-       con el sub-pixel scroll del viewport dinámico (Safari URL bar collapse).
-       translateZ(0) + will-change garantiza que WebKit respete `position: sticky`
-       en mobile incluso con `min-height: 100dvh` y secciones con overflow. */
-    .site-header {
-      -webkit-transform: translateZ(0);
-      transform: translateZ(0);
-      will-change: transform;
-      /* Asegura que el header tape el contenido detrás incluso si algún hijo
-         tuviera fondo transparente o backdrop-filter no aplicado. */
-      isolation: isolate;
+    /* Header fijo opaco. Por defecto, el body tiene un padding-top
+       conservador (mobile-first ~80px) que el script de measure ajusta
+       al render real. */
+    body {
+      padding-top: var(--site-header-h, 80px);
     }
+    /* Capa de fade debajo del header: el contenido que pasa por debajo
+       se desvanece elegantemente en vez de aparecer cortado. */
+    .site-header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 28px;
+      pointer-events: none;
+      background: linear-gradient(
+        to bottom,
+        var(--color-ink) 0%,
+        rgba(7, 6, 10, 0.6) 50%,
+        rgba(7, 6, 10, 0) 100%
+      );
+    }
+    /* Mide la altura del header y la expone como --site-header-h.
+       Se actualiza en resize y al rotar el dispositivo. */
   </style>
+
+  <script is:inline>
+    (function () {
+      const apply = () => {
+        const h = document.querySelector(".site-header");
+        if (!h) return;
+        const px = h.getBoundingClientRect().height;
+        document.documentElement.style.setProperty("--site-header-h", px + "px");
+      };
+      apply();
+      window.addEventListener("resize", apply);
+      window.addEventListener("orientationchange", apply);
+      // Re-medir tras cargar fonts (cambian el alto del Nav)
+      if (document.fonts && document.fonts.ready) {
+        document.fonts.ready.then(apply);
+      }
+      document.addEventListener("astro:page-load", apply);
+    })();
+  </script>
+
   <main>
     <Hero />
     <Marquee />
