@@ -1,0 +1,61 @@
+---
+import { galleryPhotos } from "../data/photos";
+
+// Mapeo curado: alt y span se asignan según el contenido real de cada foto.
+// El orden viene de photos.ts → [04 poster, 05 local, 02 dólares, 06 cerveza, 03 leo, 01 equipo]
+const meta = [
+  { alt: "Oveja Negra — exclusividad solo para hombres", span: "" },
+  { alt: "Interior del estudio en Containers City", span: "row-span-2" },
+  { alt: "Capa editorial — sesión de corte", span: "row-span-2" },
+  { alt: "Cerveza de barril como cortesía de la casa", span: "" },
+  { alt: "Retrato del barbero en sesión", span: "" },
+  { alt: "El equipo en el estudio", span: "" },
+];
+
+const shots = galleryPhotos.slice(0, 6).map((src, i) => ({
+  src,
+  alt: meta[i]?.alt ?? `Oveja Negra Studio — foto ${i + 1}`,
+  span: meta[i]?.span ?? "",
+}));
+---
+
+<section id="galeria" class="relative py-28 lg:py-44">
+  <div class="container-screen">
+    <div class="flex items-end justify-between flex-wrap gap-6 mb-14" data-reveal>
+      <div class="max-w-xl">
+        <p class="eyebrow mb-4">— Atmósfera</p>
+        <h2 class="h-section text-bone">
+          Penumbra cálida.<br />
+          <em class="font-light not-italic text-gradient-gold">Detalle</em> obsesivo.
+        </h2>
+      </div>
+      <p class="text-fog max-w-sm">
+        Iluminación pensada, materiales nobles, una playlist seleccionada y el aroma del aftershave.
+        Bienvenido al estudio.
+      </p>
+    </div>
+
+    <div class="grid grid-cols-2 lg:grid-cols-4 gap-3 lg:gap-4 auto-rows-[200px] lg:auto-rows-[260px]">
+      {shots.map((s, i) => (
+        <figure
+          class={`relative overflow-hidden ring-bone rounded-2xl ${s.span} group cursor-pointer`}
+          data-reveal
+          style={`--reveal-delay: ${i * 70}ms`}
+        >
+          <img
+            src={s.src}
+            alt={s.alt}
+            loading="lazy"
+            class="absolute inset-0 h-full w-full object-cover scale-[1.02] group-hover:scale-110 transition-transform duration-[1200ms] ease-[var(--ease-out-expo)]"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent opacity-90"></div>
+          <figcaption class="absolute left-4 bottom-4 right-4 text-bone">
+            <p class="font-mono text-[10px] tracking-[0.28em] uppercase text-bone/70">
+              {String(i + 1).padStart(2, "0")} / {String(shots.length).padStart(2, "0")}
+            </p>
+          </figcaption>
+        </figure>
+      ))}
+    </div>
+  </div>
+</section>

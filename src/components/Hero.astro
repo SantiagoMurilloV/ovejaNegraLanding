@@ -1,0 +1,220 @@
+---
+import { site, googleReviews, googleReviewsUrl } from "../data/site";
+import { heroPrimary, heroSecondary } from "../data/photos";
+---
+
+<section class="relative isolate overflow-hidden pt-12 pb-24 lg:pt-20 lg:pb-40">
+  <!-- Aurora -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
+    <div class="absolute -top-1/3 -right-1/4 h-[80vh] w-[80vh] rounded-full bg-gold/15 blur-3xl"></div>
+    <div class="absolute top-1/3 -left-1/4 h-[60vh] w-[60vh] rounded-full bg-blood/20 blur-3xl"></div>
+  </div>
+
+  <!-- Vertical guide lines -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-y-0 left-0 right-0 -z-10 grid grid-cols-12 container-screen">
+    {Array.from({ length: 13 }).map(() => <div class="hairline-v opacity-60"></div>)}
+  </div>
+
+  <div class="container-screen relative">
+    <div class="flex items-center justify-between gap-6 mb-12 lg:mb-20">
+      <span class="eyebrow" data-reveal>Estudio · Armenia · Quindío</span>
+      <span class="eyebrow hidden md:inline" data-reveal>Por cita previa</span>
+    </div>
+
+    <h1 class="h-display text-balance text-bone break-words [hyphens:none]" data-reveal>
+      Exclusividad<br />
+      solo para<br class="sm:hidden" />
+      <span class="relative inline-block">
+        <span class="italic font-light text-gradient-gold">hombres.</span>
+        <svg
+          aria-hidden="true"
+          viewBox="0 0 320 16"
+          class="absolute -bottom-2 left-0 w-full text-gold/70"
+          fill="none"
+        >
+          <path d="M2 10 C 80 2, 160 14, 318 6" stroke="currentColor" stroke-width="2" stroke-linecap="round" />
+        </svg>
+      </span>
+    </h1>
+
+    <div class="mt-12 grid lg:grid-cols-12 gap-10 items-end">
+      <p
+        class="lg:col-span-5 text-lg lg:text-xl text-fog leading-relaxed text-pretty max-w-xl"
+        data-reveal
+        style="--reveal-delay: 120ms"
+      >
+        Aquí cada cita es solo una. Whisky o cerveza en la mano, conversación honesta en un
+        espacio sin juicio. <span class="text-bone/85">En Armenia, sin filas y sin prisa.</span>
+      </p>
+
+      <div class="lg:col-span-4 lg:col-start-7 flex flex-col sm:flex-row items-stretch sm:items-center gap-3" data-reveal style="--reveal-delay: 240ms">
+        <a href={site.bookingUrl} target="_blank" rel="noopener" class="btn btn-primary flex-1 sm:flex-initial">
+          Agendar cita
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+            <path d="M5 12h14M13 5l7 7-7 7" />
+          </svg>
+        </a>
+        <a href="#servicios" class="btn btn-ghost flex-1 sm:flex-initial">Ver servicios</a>
+      </div>
+
+      <div class="lg:col-span-3 lg:text-right space-y-1" data-reveal style="--reveal-delay: 360ms">
+        <p class="font-mono text-xs uppercase tracking-[0.22em] text-fog">Cra. 6 — Av. Centenario</p>
+        <p class="font-mono text-xs uppercase tracking-[0.22em] text-fog">Containers City · Armenia</p>
+      </div>
+    </div>
+
+    <!-- Hero card / image stage — 4-cuadrante bento -->
+    <div class="mt-16 lg:mt-24 relative" data-reveal style="--reveal-delay: 480ms">
+      <div class="grid grid-cols-12 gap-4 lg:gap-6 lg:auto-rows-fr lg:[grid-template-rows:1fr_1fr] lg:h-[clamp(560px,72vh,720px)]">
+        <!-- Top-left: foto principal -->
+        <figure class="col-span-12 lg:col-span-7 relative aspect-[16/10] lg:aspect-auto card overflow-hidden">
+          <div data-parallax="0.05" class="absolute inset-0">
+            <img
+              src={heroPrimary}
+              alt="Oveja Negra Studio — sesión en estudio privado"
+              class="h-full w-full object-cover opacity-90"
+              loading="eager"
+              fetchpriority="high"
+            />
+          </div>
+          <div class="absolute inset-0 bg-gradient-to-tr from-ink/85 via-ink/30 to-transparent"></div>
+          <figcaption class="absolute bottom-5 left-5 right-5 flex items-end justify-between text-bone">
+            <div>
+              <p class="eyebrow">Estudio · Containers City</p>
+              <p class="font-display text-2xl mt-1">El corte como ritual.</p>
+            </div>
+            <span class="font-mono text-xs tracking-[0.22em] text-bone/70">Armenia · Q</span>
+          </figcaption>
+        </figure>
+
+        <!-- Top-right: foto retrato -->
+        <figure class="col-span-12 lg:col-span-5 relative aspect-[4/5] lg:aspect-auto card overflow-hidden">
+          <img
+            src={heroSecondary}
+            alt="Oveja Negra Studio — detalle"
+            class="h-full w-full object-cover"
+            loading="lazy"
+          />
+          <div class="absolute inset-0 bg-gradient-to-t from-ink/70 to-transparent"></div>
+          <figcaption class="absolute bottom-4 left-4 right-4 text-bone">
+            <p class="eyebrow">Detalle</p>
+            <p class="font-display text-xl mt-1">Tijera · Navaja · Mano firme.</p>
+          </figcaption>
+        </figure>
+
+        <!-- Bottom-left: bloque manifiesto -->
+        <div class="col-span-12 lg:col-span-7 relative card overflow-hidden p-7 lg:p-10 flex flex-col justify-between">
+          <div aria-hidden="true" class="pointer-events-none absolute -left-20 -bottom-20 h-72 w-72 rounded-full bg-blood/15 blur-3xl"></div>
+          <div aria-hidden="true" class="pointer-events-none absolute -right-16 -top-16 h-56 w-56 rounded-full bg-gold/10 blur-3xl"></div>
+
+          <p class="eyebrow relative">— Manifiesto</p>
+
+          <blockquote class="relative mt-5 lg:mt-0 font-display text-bone text-balance leading-[0.98] text-[clamp(1.75rem,3.6vw,3.4rem)] tracking-[-0.02em]">
+            Una silla. <em class="not-italic font-light text-gradient-gold">Un cliente.</em> Una hora.<br class="hidden lg:block" />
+            Sin filas, sin prisa.
+          </blockquote>
+
+          <div class="relative mt-6 grid grid-cols-3 gap-4 pt-6 border-t border-bone/10">
+            <div>
+              <p class="font-display text-3xl lg:text-4xl text-bone leading-none">5.0<span class="text-gold/80">★</span></p>
+              <p class="font-mono text-[10px] tracking-[0.22em] uppercase text-fog mt-2">Rating Google</p>
+            </div>
+            <div>
+              <p class="font-display text-3xl lg:text-4xl text-bone leading-none">5.8K<span class="text-gold/80">+</span></p>
+              <p class="font-mono text-[10px] tracking-[0.22em] uppercase text-fog mt-2">Agendamientos</p>
+            </div>
+            <div>
+              <p class="font-display text-3xl lg:text-4xl text-bone leading-none">1:1</p>
+              <p class="font-mono text-[10px] tracking-[0.22em] uppercase text-fog mt-2">Cita privada</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Bottom-right: card Google reviews -->
+        <div class="col-span-12 lg:col-span-5 card relative p-6 lg:p-7 flex flex-col gap-5 overflow-hidden">
+            <div aria-hidden="true" class="absolute -right-12 -top-12 h-48 w-48 rounded-full bg-gold/10 blur-3xl"></div>
+
+            <!-- Header: Google + rating -->
+            <div class="relative flex items-center justify-between">
+              <div class="flex items-center gap-2.5">
+                <!-- Google "G" badge -->
+                <svg width="20" height="20" viewBox="0 0 24 24" aria-hidden="true">
+                  <path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92a5.06 5.06 0 0 1-2.2 3.32v2.76h3.56c2.08-1.92 3.28-4.74 3.28-8.09z"/>
+                  <path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.56-2.76c-.99.66-2.25 1.06-3.72 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84A11 11 0 0 0 12 23z"/>
+                  <path fill="#FBBC05" d="M5.84 14.11A6.6 6.6 0 0 1 5.5 12c0-.73.13-1.45.34-2.11V7.05H2.18a11 11 0 0 0 0 9.9l3.66-2.84z"/>
+                  <path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15A11 11 0 0 0 12 1 11 11 0 0 0 2.18 7.05l3.66 2.84C6.71 7.31 9.14 5.38 12 5.38z"/>
+                </svg>
+                <p class="font-mono text-[10px] tracking-[0.22em] uppercase text-fog">Google · Reseñas</p>
+              </div>
+              <span class="text-gold tracking-[0.1em] text-sm">★★★★★</span>
+            </div>
+
+            <!-- Big rating + trust line -->
+            <div class="relative flex items-baseline gap-3 -mt-1">
+              <p class="font-display text-5xl lg:text-6xl leading-none text-bone">5.0</p>
+              <p class="font-mono text-[11px] tracking-[0.18em] uppercase text-fog">
+                Reseñas verificadas
+              </p>
+            </div>
+
+            <!-- Rotating quotes -->
+            <div class="relative min-h-[5.5rem]" data-reviews>
+              {googleReviews.map((r, i) => (
+                <figure
+                  class={`absolute inset-0 transition-opacity duration-700 ease-[var(--ease-out-expo)] ${
+                    i === 0 ? "opacity-100" : "opacity-0"
+                  }`}
+                  data-review-slide
+                >
+                  <blockquote class="text-bone text-[15px] leading-snug text-pretty line-clamp-3">
+                    &ldquo;{r.quote}&rdquo;
+                  </blockquote>
+                  <figcaption class="mt-2 font-mono text-[10px] tracking-[0.22em] uppercase text-fog">
+                    {r.author} · {r.when}
+                  </figcaption>
+                </figure>
+              ))}
+            </div>
+
+            <!-- Footer link -->
+            <a
+              href={googleReviewsUrl}
+              target="_blank"
+              rel="noopener"
+              class="relative -mb-1 mt-auto inline-flex items-center justify-between border-t border-bone/10 pt-4 text-bone hover:text-gold transition-colors"
+            >
+              <span class="font-mono text-[11px] tracking-[0.22em] uppercase">Leer todas en Google</span>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+                <path d="M5 12h14M13 5l7 7-7 7" />
+              </svg>
+            </a>
+          </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  const initReviews = () => {
+    const root = document.querySelector("[data-reviews]");
+    if (!root) return;
+    const slides = Array.from(root.querySelectorAll<HTMLElement>("[data-review-slide]"));
+    if (slides.length < 2) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let idx = 0;
+    const tick = () => {
+      slides[idx].style.opacity = "0";
+      idx = (idx + 1) % slides.length;
+      slides[idx].style.opacity = "1";
+    };
+    // Limpia timer previo si la página re-monta (ClientRouter)
+    const KEY = "__ovejaReviewsTimer";
+    const w = window as unknown as Record<string, number | undefined>;
+    if (w[KEY]) clearInterval(w[KEY]);
+    w[KEY] = window.setInterval(tick, 5200) as unknown as number;
+  };
+
+  document.addEventListener("astro:page-load", initReviews);
+  initReviews();
+</script>

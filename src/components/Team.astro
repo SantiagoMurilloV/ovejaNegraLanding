@@ -1,0 +1,48 @@
+---
+import { team } from "../data/site";
+import { teamPhotos } from "../data/photos";
+
+const portraits = teamPhotos;
+---
+
+<section id="equipo" class="relative py-28 lg:py-44 bg-coal/40">
+  <div class="container-screen">
+    <header class="grid lg:grid-cols-12 gap-10 mb-16" data-reveal>
+      <p class="eyebrow lg:col-span-3">— El equipo</p>
+      <h2 class="h-section text-bone lg:col-span-7">
+        Manos con <em class="font-light not-italic text-gradient-gold">historia</em>.
+        Mente con presencia.
+      </h2>
+    </header>
+
+    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 lg:gap-6">
+      {team.map((m, i) => (
+        <article
+          class="group relative card overflow-hidden"
+          data-reveal
+          style={`--reveal-delay: ${i * 90}ms`}
+        >
+          <div class="aspect-portrait relative overflow-hidden">
+            <img
+              src={portraits[i % portraits.length]}
+              alt={`Retrato de ${m.name}`}
+              loading="lazy"
+              class="absolute inset-0 h-full w-full object-cover transition-all duration-[1400ms] ease-[var(--ease-out-expo)] group-hover:scale-110 group-hover:grayscale-0 grayscale"
+            />
+            <div class="absolute inset-0 bg-gradient-to-t from-ink/95 via-ink/30 to-transparent"></div>
+            <div class="absolute bottom-5 left-5 right-5">
+              <p class="font-mono text-[10px] tracking-[0.28em] uppercase text-gold/90 mb-2">
+                {String(i + 1).padStart(2, "0")} / {String(team.length).padStart(2, "0")}
+              </p>
+              <h3 class="font-display text-3xl text-bone leading-none">{m.name}</h3>
+              <p class="mt-1 text-fog text-sm">{m.role}</p>
+            </div>
+          </div>
+          <div class="p-6 border-t border-bone/5">
+            <p class="text-fog leading-relaxed text-[15px]">{m.bio}</p>
+          </div>
+        </article>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,0 +1,86 @@
+---
+import { services, site } from "../data/site";
+
+// Formato compacto sin espacio entre el símbolo y el número: "$120.000"
+const fmt = (n: number) =>
+  "$" +
+  new Intl.NumberFormat("es-CO", {
+    maximumFractionDigits: 0,
+  }).format(n);
+---
+
+<section id="servicios" class="relative py-28 lg:py-44 bg-coal/40">
+  <div class="container-screen">
+    <header class="flex items-end justify-between flex-wrap gap-6 mb-16 lg:mb-24" data-reveal>
+      <div class="max-w-xl">
+        <p class="eyebrow mb-4">— Carta de servicios</p>
+        <h2 class="h-section text-bone">
+          Lo que <em class="font-light not-italic text-gradient-gold">hacemos</em><br />en la silla.
+        </h2>
+      </div>
+      <p class="text-fog max-w-md">
+        Cada servicio incluye consulta de imagen, productos premium y bebida de cortesía. Reserva con
+        15 minutos de holgura: tu cita es tuya.
+      </p>
+    </header>
+
+    <ul class="grid gap-px bg-bone/5 ring-bone rounded-3xl overflow-hidden">
+      {services.map((s, i) => (
+        <li
+          class="group relative bg-ink hover:bg-soot transition-colors duration-500"
+          data-reveal
+          style={`--reveal-delay: ${i * 60}ms`}
+        >
+          <div class="grid grid-cols-12 gap-x-4 gap-y-3 lg:gap-6 items-baseline lg:items-center p-5 lg:p-10">
+            <!-- Número (siempre top-left) -->
+            <span class="col-span-2 lg:col-span-1 font-mono text-xs text-gold tracking-[0.22em]">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+
+            <!-- Tier label (al lado del número en mobile, encima del nombre en desktop) -->
+            <p class="col-span-10 lg:col-span-4 lg:col-start-2 lg:row-start-1 lg:row-end-2 lg:self-end font-mono text-[10px] tracking-[0.28em] uppercase text-fog">
+              <span class="inline-flex items-center gap-2">
+                {s.tier}
+                {s.highlight && (
+                  <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[9px] bg-gold/15 text-gold-soft border border-gold/25 normal-case tracking-[0.18em]">
+                    ★ Firma
+                  </span>
+                )}
+              </span>
+            </p>
+
+            <!-- Nombre del servicio -->
+            <h3 class="col-span-12 lg:col-span-4 lg:col-start-2 lg:row-start-2 font-display text-2xl sm:text-3xl lg:text-5xl text-bone leading-[1.02] lg:leading-[0.95] group-hover:text-gradient-gold transition-all duration-500 text-balance">
+              {s.name}
+            </h3>
+
+            <!-- Descripción -->
+            <p class="col-span-12 lg:col-span-3 lg:col-start-6 lg:row-start-1 lg:row-end-3 lg:self-center text-fog leading-relaxed text-[14px] lg:text-[15px]">{s.desc}</p>
+
+            <!-- Duración -->
+            <div class="col-span-6 lg:col-span-1 lg:col-start-9 lg:row-start-1 lg:row-end-3 lg:self-center font-mono text-xs text-fog tracking-[0.18em] whitespace-nowrap">
+              {s.duration}
+            </div>
+
+            <!-- Precio -->
+            <div class="col-span-6 lg:col-span-3 lg:col-start-10 lg:row-start-1 lg:row-end-3 lg:self-center text-right font-display text-2xl lg:text-4xl text-bone tabular-nums whitespace-nowrap tracking-tight">
+              {fmt(s.price)}
+            </div>
+          </div>
+          <span aria-hidden="true" class="pointer-events-none absolute inset-x-10 bottom-0 h-px bg-gradient-to-r from-transparent via-gold/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></span>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mt-12 flex flex-col lg:flex-row lg:items-center gap-6 lg:gap-4 lg:justify-between" data-reveal>
+      <p class="text-fog text-sm max-w-md">
+        Precios referenciales en COP. Para combos personalizados o paquetes de regalo, escríbenos por
+        WhatsApp.
+      </p>
+      <div class="flex flex-col sm:flex-row gap-3">
+        <a href={site.bookingUrl} target="_blank" rel="noopener" class="btn btn-primary">Reservar ahora</a>
+        <a href={site.whatsappLink} target="_blank" rel="noopener" class="btn btn-ghost">WhatsApp</a>
+      </div>
+    </div>
+  </div>
+</section>

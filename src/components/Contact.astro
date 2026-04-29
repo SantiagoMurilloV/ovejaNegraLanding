@@ -1,0 +1,108 @@
+---
+import { site } from "../data/site";
+
+// Mostramos solo días que abren — domingo lo metemos como nota inferior
+const openHours = site.hours.filter((h) => h.close);
+const closedDays = site.hours.filter((h) => !h.close).map((h) => h.day);
+---
+
+<section id="contacto" class="relative py-20 lg:py-44 bg-coal/40">
+  <div class="container-screen grid lg:grid-cols-12 gap-8 lg:gap-12">
+
+    <!-- ─── Encabezado + info izquierda ─── -->
+    <div class="lg:col-span-5 lg:order-1 order-1" data-reveal>
+      <p class="eyebrow mb-3">— Contacto</p>
+      <h2 class="h-section text-bone">
+        Estamos en <em class="font-light not-italic text-gradient-gold">Armenia</em>.<br class="hidden sm:block" />
+        Te esperamos.
+      </h2>
+    </div>
+
+    <!-- ─── Mapa (en mobile va inmediatamente después del título) ─── -->
+    <div class="lg:col-span-7 lg:order-2 order-2 relative card overflow-hidden ring-bone aspect-[4/3] sm:aspect-[16/10] lg:aspect-auto lg:min-h-[420px]" data-reveal style="--reveal-delay: 120ms">
+      <iframe
+        title="Mapa Oveja Negra Studio en Armenia"
+        src="https://www.google.com/maps?q=Containers+City+Armenia+Quindio+Cra+6+Av+Centenario&output=embed"
+        class="absolute inset-0 h-full w-full grayscale-[0.6] contrast-110 brightness-90"
+        loading="lazy"
+        referrerpolicy="no-referrer-when-downgrade"
+      ></iframe>
+      <div aria-hidden="true" class="pointer-events-none absolute inset-0 bg-gradient-to-tr from-ink/60 via-transparent to-ink/20"></div>
+      <div class="pointer-events-none absolute bottom-4 left-4 right-4 flex items-end justify-between text-bone">
+        <div>
+          <p class="font-mono text-[9px] sm:text-[10px] tracking-[0.28em] uppercase text-bone/70">Ubicación</p>
+          <p class="font-display text-base sm:text-xl">Containers City · Armenia</p>
+        </div>
+        <span class="hidden sm:inline font-mono text-[10px] tracking-[0.28em] uppercase text-bone/70">04°31'N · 75°41'W</span>
+      </div>
+    </div>
+
+    <!-- ─── Info de contacto (en mobile va al final, dirección bien visible) ─── -->
+    <div class="lg:col-span-5 lg:order-3 order-3" data-reveal style="--reveal-delay: 60ms">
+      <!-- Dirección destacada (en mobile encima de las dos columnas) -->
+      <div class="mb-6 lg:mb-0">
+        <p class="font-mono text-[10px] tracking-[0.28em] uppercase text-fog mb-2">Dirección</p>
+        <p class="font-display text-xl lg:text-2xl text-bone leading-snug">{site.address}</p>
+      </div>
+
+      <!-- Grid compacto de contacto (mobile: 2 cols, desktop: stack) -->
+      <dl class="mt-6 lg:mt-8 grid grid-cols-2 lg:grid-cols-1 gap-x-4 gap-y-6 lg:gap-8">
+        <div>
+          <dt class="font-mono text-[10px] tracking-[0.28em] uppercase text-fog mb-2">WhatsApp</dt>
+          <dd>
+            <a
+              href={site.whatsappLink}
+              target="_blank"
+              rel="noopener"
+              class="font-display text-base lg:text-2xl text-bone hover:text-gold transition-colors break-words"
+            >
+              {site.whatsapp}
+            </a>
+          </dd>
+        </div>
+
+        <div>
+          <dt class="font-mono text-[10px] tracking-[0.28em] uppercase text-fog mb-2">Síguenos</dt>
+          <dd class="flex flex-col lg:flex-row gap-1.5 lg:gap-3 lg:flex-wrap">
+            <a
+              href={site.instagram}
+              target="_blank"
+              rel="noopener"
+              class="font-display text-base lg:text-base text-bone hover:text-gold transition-colors lg:btn lg:btn-ghost lg:font-mono lg:text-xs"
+            >
+              <span class="lg:hidden">Instagram</span>
+              <span class="hidden lg:inline">Instagram</span>
+            </a>
+            <a
+              href={`mailto:${site.email}`}
+              class="font-display text-base lg:text-base text-bone hover:text-gold transition-colors lg:btn lg:btn-ghost lg:font-mono lg:text-xs"
+            >
+              <span class="lg:hidden">Email</span>
+              <span class="hidden lg:inline">Email</span>
+            </a>
+          </dd>
+        </div>
+
+        <!-- Horarios ocupa las 2 columnas en mobile -->
+        <div class="col-span-2 lg:col-span-1">
+          <dt class="font-mono text-[10px] tracking-[0.28em] uppercase text-fog mb-3">Horarios</dt>
+          <dd class="grid grid-cols-2 lg:grid-cols-1 gap-x-6 gap-y-2.5">
+            {openHours.map((h) => (
+              <div class="flex flex-col lg:flex-row lg:items-baseline lg:justify-between border-b border-bone/5 py-1.5">
+                <span class="text-bone text-[15px] lg:text-base">{h.day}</span>
+                <span class="font-mono text-xs lg:text-sm text-fog tracking-wider tabular-nums mt-0.5 lg:mt-0">
+                  {h.open}–{h.close}
+                </span>
+              </div>
+            ))}
+          </dd>
+          {closedDays.length > 0 && (
+            <p class="mt-3 font-mono text-[10px] tracking-[0.22em] uppercase text-fog/70">
+              {closedDays.join(", ")} · Cerrado
+            </p>
+          )}
+        </div>
+      </dl>
+    </div>
+  </div>
+</section>

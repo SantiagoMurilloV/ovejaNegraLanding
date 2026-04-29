@@ -1,0 +1,38 @@
+---
+import { site } from "../data/site";
+---
+
+<section id="reservar" class="relative py-28 lg:py-44 overflow-hidden">
+  <!-- Spotlight -->
+  <div aria-hidden="true" class="pointer-events-none absolute inset-0 -z-10">
+    <div class="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 h-[80vh] w-[80vh] rounded-full bg-gold/10 blur-3xl"></div>
+  </div>
+
+  <div class="container-screen text-center" data-reveal>
+    <p class="eyebrow mb-6">— Reservar cita</p>
+    <h2 class="h-display text-bone text-balance">
+      Tu silla<br />
+      te <em class="font-light not-italic text-gradient-gold">espera.</em>
+    </h2>
+    <p class="mt-8 mx-auto max-w-xl text-fog text-lg leading-relaxed">
+      Bloqueamos cada cita para una sola persona. Reserva en línea o escríbenos por WhatsApp y armamos
+      el ritual a tu medida.
+    </p>
+
+    <div class="mt-12 flex flex-col sm:flex-row sm:flex-wrap items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-md sm:max-w-none mx-auto">
+      <a href={site.bookingUrl} target="_blank" rel="noopener" class="btn btn-primary">
+        Reservar online
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true">
+          <path d="M5 12h14M13 5l7 7-7 7" />
+        </svg>
+      </a>
+      <a href={site.whatsappLink} target="_blank" rel="noopener" class="btn btn-ghost">
+        WhatsApp directo
+      </a>
+    </div>
+
+    <p class="mt-10 font-mono text-xs tracking-[0.22em] uppercase text-fog">
+      {site.address}
+    </p>
+  </div>
+</section>

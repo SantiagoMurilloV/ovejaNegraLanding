@@ -1,0 +1,28 @@
+---
+import { site } from "../data/site";
+const items = [
+  `★ 5.0 · 999+ reseñas`,
+  `Estudio privado en ${site.city}`,
+  `Reservas confirmadas en menos de 1 hora`,
+  `Cerveza · Café · Música seleccionada`,
+];
+---
+
+<div class="border-b border-bone/5 bg-coal/60 backdrop-blur">
+  <div class="container-screen flex items-center justify-center md:justify-between gap-3 md:gap-4 py-2.5 text-[10px] md:text-[11px] tracking-[0.18em] md:tracking-[0.18em] uppercase font-mono text-fog">
+    <div class="hidden md:flex items-center gap-6">
+      {items.slice(0, 2).map((t) => <span>{t}</span>)}
+    </div>
+    <div class="flex items-center gap-3 md:gap-5">
+      <span class="md:hidden">★ 5.0</span>
+      <span class="md:hidden opacity-50">·</span>
+      <a href={site.whatsappLink} target="_blank" rel="noopener" class="hover:text-bone transition-colors truncate">
+        <span class="hidden sm:inline">WhatsApp · </span>{site.whatsapp}
+      </a>
+      <span class="hidden sm:inline opacity-50">|</span>
+      <a href={site.instagram} target="_blank" rel="noopener" class="hidden sm:inline hover:text-bone transition-colors">
+        Instagram
+      </a>
+    </div>
+  </div>
+</div>

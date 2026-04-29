@@ -1,0 +1,27 @@
+---
+const items = [
+  "Sé la oveja negra",
+  "Old school · New craft",
+  "Estudio privado",
+  "Armenia · Quindío",
+  "Conversación honesta",
+  "Una silla a la vez",
+  "Detalle obsesivo",
+  "Café · Cerveza · Música",
+];
+---
+
+<section aria-hidden="true" class="border-y border-bone/5 bg-coal py-7 select-none">
+  <div class="marquee">
+    <div class="marquee-track">
+      {items.concat(items).map((t) => (
+        <span class="flex items-center gap-12 font-display text-3xl md:text-5xl lg:text-6xl text-bone/80">
+          <span>{t}</span>
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" class="text-gold/80" aria-hidden="true">
+            <path d="M12 2 L14.6 9.4 L22 12 L14.6 14.6 L12 22 L9.4 14.6 L2 12 L9.4 9.4 Z" />
+          </svg>
+        </span>
+      ))}
+    </div>
+  </div>
+</section>
