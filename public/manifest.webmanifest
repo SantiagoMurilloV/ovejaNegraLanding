@@ -1,0 +1,39 @@
+{
+  "name": "Oveja Negra Gentleman Studio",
+  "short_name": "Oveja Negra",
+  "description": "Barbería privada para hombres en Armenia. Estudio premium, atención 1:1, ritual sin prisa.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#07060a",
+  "theme_color": "#07060a",
+  "lang": "es-CO",
+  "categories": ["lifestyle", "business"],
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any"
+    },
+    {
+      "src": "/icon-192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/icon-512.png",
+      "type": "image/png",
+      "sizes": "512x512",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/apple-touch-icon.png",
+      "type": "image/png",
+      "sizes": "180x180",
+      "purpose": "any"
+    }
+  ]
+}
