@@ -96,101 +96,75 @@ const ogImageAbsolute = new URL(ogImage, siteOrigin).toString();
 
     <!-- Reveal-on-scroll + parallax -->
     <script>
-      // Si el usuario tiene "Reducir movimiento" en iOS/macOS, mostramos todo
-      // sin animación pero al menos visible. Sin esto, los elementos quedaban
-      // ocultos para usuarios con preferencia accesible.
-      const prefersReduce = () =>
-        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+      // ESTRATEGIA:
+      // - Mobile/tablet (<1024px): los reveals corren con CSS-only animation
+      //   keyframes definidos en global.css. Sin JS, sin observer.
+      //   iOS Safari NO puede saltar las keyframe animations como sí salta
+      //   las CSS transitions. Esto garantiza que se vean siempre.
+      // - Desktop (>=1024px): añadimos clase .js-reveals-ready a <html> para
+      //   que el CSS active el modo reveal-on-scroll cinemático con observer.
+      //   Si el JS falla en desktop, el CSS-only sigue funcionando como fallback.
 
-      const showAllImmediate = () => {
-        document.querySelectorAll("[data-reveal]").forEach((el) => {
-          el.classList.add("is-visible");
-        });
-      };
+      const isDesktop = () => window.matchMedia("(min-width: 1024px)").matches;
 
-      const isInViewport = (el: Element) => {
-        const r = el.getBoundingClientRect();
-        const vh = window.innerHeight || document.documentElement.clientHeight;
-        return r.top < vh && r.bottom > 0;
-      };
+      const initDesktopReveals = () => {
+        // Marca el modo JS-driven solo en desktop, antes de que se pinte algo.
+        document.documentElement.classList.add("js-reveals-ready");
 
-      const init = () => {
-        // Si reduce-motion: pinta todo visible y salimos.
-        if (prefersReduce()) {
-          showAllImmediate();
+        const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+        if (!("IntersectionObserver" in window)) {
+          els.forEach((el) => el.classList.add("is-visible"));
           return;
         }
 
-        const els = Array.from(document.querySelectorAll<HTMLElement>("[data-reveal]"));
+        const io = new IntersectionObserver(
+          (entries) => {
+            entries.forEach((e) => {
+              if (e.isIntersecting) {
+                requestAnimationFrame(() => e.target.classList.add("is-visible"));
+                io.unobserve(e.target);
+              }
+            });
+          },
+          { threshold: 0.08, rootMargin: "0px 0px -6% 0px" }
+        );
+        els.forEach((el) => io.observe(el));
 
-        // ─── PRIMER VIEWPORT: animación garantizada con stagger ─────
-        // En iOS Safari, IntersectionObserver puede dispararse antes
-        // del primer paint y el browser optimiza saltándose la transición.
-        // Para los elementos ya visibles al cargar, los activamos con
-        // setTimeout escalonado — animación 100% confiable.
-        const STAGGER_MS = 110;
-        const firstWave = els.filter(isInViewport);
-        const offscreen = els.filter((el) => !isInViewport(el));
-
-        firstWave.forEach((el, i) => {
-          setTimeout(() => {
-            el.classList.add("is-visible");
-          }, 80 + i * STAGGER_MS); // 80ms inicial para asegurar primer paint
-        });
-
-        // ─── REVEALS POR SCROLL: observer para los que están abajo ──
-        if (!("IntersectionObserver" in window)) {
-          // Fallback: si no hay observer, muéstralos todos al instante
-          offscreen.forEach((el) => el.classList.add("is-visible"));
-        } else {
-          const io = new IntersectionObserver(
-            (entries) => {
-              entries.forEach((e) => {
-                if (e.isIntersecting) {
-                  const el = e.target as HTMLElement;
-                  requestAnimationFrame(() => el.classList.add("is-visible"));
-                  io.unobserve(el);
-                }
-              });
-            },
-            { threshold: 0.05, rootMargin: "0px 0px -8% 0px" }
-          );
-          offscreen.forEach((el) => io.observe(el));
-        }
-
-        // Safety net: si por cualquier razón un reveal queda invisible
-        // 2s después de inicializar, lo forzamos visible.
+        // Safety net por si el observer falla.
         setTimeout(() => {
           document.querySelectorAll("[data-reveal]:not(.is-visible)").forEach((el) => {
             el.classList.add("is-visible");
           });
-        }, 2000);
-
-        // Light parallax (desactivado en móvil para performance/jank en iOS)
-        const isMobile = window.matchMedia("(max-width: 1023px)").matches;
-        const px = document.querySelectorAll<HTMLElement>("[data-parallax]");
-        if (px.length && !isMobile) {
-          const onScroll = () => {
-            const y = window.scrollY;
-            px.forEach((el) => {
-              const speed = parseFloat(el.dataset.parallax || "0.1");
-              el.style.setProperty("--parallax-y", `${y * speed * -1}px`);
-            });
-          };
-          window.addEventListener("scroll", onScroll, { passive: true });
-          onScroll();
-        }
+        }, 2500);
       };
 
-      // Esperar al primer paint antes de inicializar (clave para iOS Safari).
-      const boot = () => requestAnimationFrame(() => requestAnimationFrame(init));
+      const initParallax = () => {
+        if (!isDesktop()) return; // Sin parallax en móvil
+        const px = document.querySelectorAll<HTMLElement>("[data-parallax]");
+        if (!px.length) return;
+        const onScroll = () => {
+          const y = window.scrollY;
+          px.forEach((el) => {
+            const speed = parseFloat(el.dataset.parallax || "0.1");
+            el.style.setProperty("--parallax-y", `${y * speed * -1}px`);
+          });
+        };
+        window.addEventListener("scroll", onScroll, { passive: true });
+        onScroll();
+      };
+
+      const init = () => {
+        if (isDesktop()) initDesktopReveals();
+        // En mobile no hace nada con reveals — el CSS los maneja solo.
+        initParallax();
+      };
 
       if (document.readyState === "loading") {
-        document.addEventListener("DOMContentLoaded", boot, { once: true });
+        document.addEventListener("DOMContentLoaded", init, { once: true });
       } else {
-        boot();
+        init();
       }
-      document.addEventListener("astro:page-load", boot);
+      document.addEventListener("astro:page-load", init);
     </script>
   </body>
 </html>

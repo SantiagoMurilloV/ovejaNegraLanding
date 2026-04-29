@@ -197,22 +197,9 @@
     box-shadow: 0 10px 30px -20px rgba(0, 0, 0, 0.6);
   }
 
-  /* TopBar colapsable al scrollear (solo móvil). Libera espacio vertical
-     y deja solo el Nav visible — patrón premium estilo Apple/Aēsop. */
+  /* TopBar siempre visible, hace parte del header sticky. */
   .site-topbar {
-    overflow: hidden;
-    transition:
-      max-height 420ms var(--ease-out-expo),
-      opacity 260ms ease-out,
-      border-color 260ms ease-out;
-    max-height: 4rem;
-  }
-  @media (max-width: 1023px) {
-    .site-header.is-scrolled .site-topbar {
-      max-height: 0;
-      opacity: 0;
-      border-bottom-color: transparent;
-    }
+    background: var(--color-coal);
   }
 
   /* Grain overlay */
@@ -231,39 +218,40 @@
      Razón: iOS Safari "optimiza" transitions saltándoselas si el cambio
      de clase ocurre antes del primer paint. Las keyframe animations SÍ
      corren siempre, el browser no las puede saltar. */
+  /* Mobile/tablet: animation CSS-only, sin depender de JS. iOS Safari
+     no salta las keyframe animations como sí salta las transitions.
+     Todos los reveals corren al cargar la página. Los elementos con
+     `--reveal-delay` definido inline reciben stagger cinemático.
+     Los demás animan con un pequeño retraso de entrada (180ms). */
   [data-reveal] {
     opacity: 0;
+    animation: revealUp 700ms var(--ease-out-expo) both;
+    animation-delay: var(--reveal-delay, 180ms);
     will-change: opacity, transform;
-  }
-  [data-reveal].is-visible {
-    animation: revealUp 900ms var(--ease-out-expo) both;
-    animation-delay: var(--reveal-delay, 0ms);
   }
   @keyframes revealUp {
     0% {
       opacity: 0;
-      transform: translateY(28px);
+      transform: translateY(22px);
     }
     100% {
       opacity: 1;
       transform: translateY(0);
     }
   }
-  /* En móvil las animaciones son más rápidas y con menos desplazamiento. */
-  @media (max-width: 1023px) {
-    [data-reveal].is-visible {
-      animation: revealUpMobile 520ms var(--ease-out-expo) both;
-      animation-delay: var(--reveal-delay, 0ms);
+
+  /* Desktop (>=1024px): cuando el JS observer está disponible, usamos
+     reveal-on-scroll cinemático activado por la clase .js-reveals-ready
+     que el script añade a <html> al inicializar. Si falla, el CSS-only
+     del bloque anterior actúa como fallback automático. */
+  @media (min-width: 1024px) {
+    .js-reveals-ready [data-reveal] {
+      animation: none;
+      opacity: 0;
     }
-    @keyframes revealUpMobile {
-      0% {
-        opacity: 0;
-        transform: translateY(18px);
-      }
-      100% {
-        opacity: 1;
-        transform: translateY(0);
-      }
+    .js-reveals-ready [data-reveal].is-visible {
+      animation: revealUp 900ms var(--ease-out-expo) both;
+      animation-delay: var(--reveal-delay, 0ms);
     }
   }
 
