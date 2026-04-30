@@ -17,9 +17,15 @@ import Footer from "../components/Footer.astro";
 ---
 
 <Base>
+  <!-- TECHO opaco extra: cubre por completo desde el top del viewport
+       hasta el bottom del header. Es un seguro contra bugs de iOS Safari
+       donde la URL bar dinámica deja ver contenido un instante. Z-index
+       altísimo (50), pero pointer-events:none para que no bloquee taps. -->
+  <div class="site-ceiling" aria-hidden="true"></div>
+
   <!-- Header con position:fixed para evitar TODOS los bugs de sticky en iOS Safari.
        El padding-top del body se calcula dinámicamente con JS midiendo el header. -->
-  <div class="site-header fixed inset-x-0 top-0 z-40 bg-ink border-b border-bone/8">
+  <div class="site-header fixed inset-x-0 top-0 z-50 bg-ink border-b border-bone/8">
     <TopBar />
     <Nav />
   </div>
@@ -31,6 +37,30 @@ import Footer from "../components/Footer.astro";
     body {
       padding-top: var(--site-header-h, 80px);
     }
+
+    /* ─── CAPAS Z (de atrás hacia adelante) ─────────────────────────
+       0:   <main> y secciones (contenido scrolleable, va por debajo)
+       49:  .site-ceiling (techo de seguridad opaco)
+       50:  .site-header (header siempre encima del techo)
+       60:  .grain::after (textura sutil, encima de todo)
+    */
+    main {
+      position: relative;
+      z-index: 0;
+      isolation: isolate; /* sus stacking contexts no escapan hacia arriba */
+    }
+
+    .site-ceiling {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--site-header-h, 80px);
+      z-index: 49;
+      background: var(--color-ink);
+      pointer-events: none;
+    }
+
     /* Capa de fade debajo del header: el contenido que pasa por debajo
        se desvanece elegantemente en vez de aparecer cortado. */
     .site-header::after {
@@ -48,8 +78,6 @@ import Footer from "../components/Footer.astro";
         rgba(7, 6, 10, 0) 100%
       );
     }
-    /* Mide la altura del header y la expone como --site-header-h.
-       Se actualiza en resize y al rotar el dispositivo. */
   </style>
 
   <script is:inline>
