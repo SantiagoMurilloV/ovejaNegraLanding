@@ -90,22 +90,31 @@ import Footer from "../components/Footer.astro";
       z-index: 1;
     }
 
-    /* Blur backdrop adicional encima del fade — el contenido detrás
-       se ve borroso (frosted) y se desvanece con la distancia, lo que
-       da la sensación premium de "frosted glass" del header. Capa
-       independiente para que el blur también se atenúe con mask. */
+    /* Blur backdrop debajo del header — efecto "frosted glass" para que
+       el contenido se difumine al pasar. Solo se activa si el browser
+       soporta backdrop-filter SIN mask-image (combo problemático en iOS 17+).
+       Si el browser no lo aplica, el fade-gradient del ::after solo es
+       suficiente como solución estética. */
     .site-header-blur {
       position: fixed;
       left: 0;
       right: 0;
       top: var(--site-header-h, 80px);
-      height: 56px;
+      height: 48px;
       pointer-events: none;
       z-index: 48;
-      -webkit-backdrop-filter: blur(10px);
-      backdrop-filter: blur(10px);
-      -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
-      mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+    }
+    @supports ((-webkit-backdrop-filter: blur(8px)) or (backdrop-filter: blur(8px))) {
+      .site-header-blur {
+        -webkit-backdrop-filter: blur(8px) saturate(120%);
+        backdrop-filter: blur(8px) saturate(120%);
+        background: linear-gradient(
+          to bottom,
+          rgba(7, 6, 10, 0.55) 0%,
+          rgba(7, 6, 10, 0.25) 50%,
+          rgba(7, 6, 10, 0)    100%
+        );
+      }
     }
   </style>
 
