@@ -30,6 +30,11 @@ import Footer from "../components/Footer.astro";
     <Nav />
   </div>
 
+  <!-- Capa frosted-glass debajo del header: el contenido scrolleando se
+       difumina elegantemente al pasar por aquí. Posicionada justo abajo
+       del header con altura de 56px, fade-out gradual hasta transparent. -->
+  <div class="site-header-blur" aria-hidden="true"></div>
+
   <style is:global>
     /* Header fijo opaco. Por defecto, el body tiene un padding-top
        conservador (mobile-first ~80px) que el script de measure ajusta
@@ -61,22 +66,46 @@ import Footer from "../components/Footer.astro";
       pointer-events: none;
     }
 
-    /* Capa de fade debajo del header: el contenido que pasa por debajo
-       se desvanece elegantemente en vez de aparecer cortado. */
+    /* Fade extendido bajo el header: el contenido que pasa por debajo
+       se desvanece de forma gradual y elegante, sin cortes feos.
+       80px de altura con varios stops para mimic del efecto estilo
+       Apple/Linear donde el contenido "se difumina" antes de desaparecer. */
     .site-header::after {
       content: "";
       position: absolute;
       left: 0;
       right: 0;
       top: 100%;
-      height: 28px;
+      height: 72px;
       pointer-events: none;
       background: linear-gradient(
         to bottom,
         var(--color-ink) 0%,
-        rgba(7, 6, 10, 0.6) 50%,
-        rgba(7, 6, 10, 0) 100%
+        rgba(7, 6, 10, 0.94) 18%,
+        rgba(7, 6, 10, 0.78) 38%,
+        rgba(7, 6, 10, 0.5)  60%,
+        rgba(7, 6, 10, 0.22) 80%,
+        rgba(7, 6, 10, 0)    100%
       );
+      z-index: 1;
+    }
+
+    /* Blur backdrop adicional encima del fade — el contenido detrás
+       se ve borroso (frosted) y se desvanece con la distancia, lo que
+       da la sensación premium de "frosted glass" del header. Capa
+       independiente para que el blur también se atenúe con mask. */
+    .site-header-blur {
+      position: fixed;
+      left: 0;
+      right: 0;
+      top: var(--site-header-h, 80px);
+      height: 56px;
+      pointer-events: none;
+      z-index: 48;
+      -webkit-backdrop-filter: blur(10px);
+      backdrop-filter: blur(10px);
+      -webkit-mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
+      mask-image: linear-gradient(to bottom, #000 0%, rgba(0,0,0,0.55) 60%, transparent 100%);
     }
   </style>
 
